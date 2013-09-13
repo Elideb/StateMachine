@@ -12,6 +12,9 @@ namespace StateMachine {
         /// </summary>
         public State<T> FromState { get; private set; }
 
+        /// <summary>
+        /// States this trancsition cannot start from.
+        /// </summary>
         private State<T>[] exceptionStates;
         public IEnumerable<State<T>> ExceptionStates {
             get {
@@ -19,8 +22,16 @@ namespace StateMachine {
             }
         }
 
+        /// <summary>
+        /// State this transition triggers when conditions are met.
+        /// </summary>
         public State<T> ToState { get; private set; }
 
+        /// <summary>
+        /// Create a transition which can trigger from any state.
+        /// </summary>
+        /// <param name="condition">Condition which would trigger the transition.</param>
+        /// <param name="toState">State to change the state machine to when triggered.</param>
         public StateTransition(Predicate<T> condition, State<T> toState)
             : this() {
             exceptionStates = null;
@@ -30,6 +41,12 @@ namespace StateMachine {
             ToState = toState;
         }
 
+        /// <summary>
+        /// Create a transition which can only trigger for a specific state.
+        /// </summary>
+        /// <param name="fromState">State the machine must be executing to trigger the transition.</param>
+        /// <param name="condition">Condition which would trigger the transition.</param>
+        /// <param name="toState">State to change the state machine to when triggered.</param>
         public StateTransition(State<T> fromState, Predicate<T> condition, State<T> toState)
             : this() {
             exceptionStates = null;
@@ -39,6 +56,12 @@ namespace StateMachine {
             ToState = toState;
         }
 
+        /// <summary>
+        /// Create a transition which can trigger from any state but the one specified.
+        /// </summary>
+        /// <param name="condition">Condition which would trigger the transition.</param>
+        /// <param name="exceptionState">State from which the transition cannot be triggered.</param>
+        /// <param name="toState">State to change the state machine to when triggered.</param>
         public StateTransition(Predicate<T> condition, State<T> exceptionState, State<T> toState)
             : this() {
             exceptionStates = new State<T>[1] { exceptionState };
@@ -48,6 +71,12 @@ namespace StateMachine {
             ToState = toState;
         }
 
+        /// <summary>
+        /// Create a transition which can trigger from any state but the ones specified.
+        /// </summary>
+        /// <param name="condition">Condition which would trigger the transition.</param>
+        /// <param name="exceptions">States from which the transition cannot be triggered.</param>
+        /// <param name="toState">State to change the state machine to when triggered.</param>
         public StateTransition(Predicate<T> condition, State<T>[] exceptions, State<T> toState)
             : this() {
             exceptionStates = new State<T>[exceptions.Length];

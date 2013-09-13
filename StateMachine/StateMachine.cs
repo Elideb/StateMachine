@@ -22,6 +22,9 @@ namespace StateMachine {
 
         private State<T> state = null;
 
+        /// <summary>
+        /// Current executing state.
+        /// </summary>
         public State<T> State {
             get { return state; }
             private set {
@@ -34,8 +37,16 @@ namespace StateMachine {
             }
         }
 
+        /// <summary>
+        /// Transitions which determine this state machine's behaviour.
+        /// </summary>
         private List<StateTransition<T>> transitions = new List<StateTransition<T>>();
 
+        /// <summary>
+        /// Create a new state machine.
+        /// </summary>
+        /// <param name="owner">Whose behaviour is controlled by this state machine.</param>
+        /// <param name="initialState">State the state machine starts from.</param>
         public StateMachine(T owner, State<T> initialState) {
             Owner = owner;
             State = initialState;
@@ -72,6 +83,9 @@ namespace StateMachine {
             }
         }
 
+        /// <summary>
+        /// Check transitions and update the current state.
+        /// </summary>
         public void Update() {
             // Check if a new state should be executed
             foreach (var transition in transitions) {
