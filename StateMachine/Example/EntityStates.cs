@@ -36,7 +36,7 @@ namespace StateMachine.Example {
                 new StateTransition<Entity>( Entity.HasNoTarget, TalkState.Instance, IdleState.Instance ),
 
                 // Exit transition
-                new StateTransition<Entity>(this, Entity.HasTarget, WalkState.Instance)
+                new StateTransition<Entity>(IdleState.Instance, Entity.HasTarget, WalkState.Instance)
             };
         }
 
