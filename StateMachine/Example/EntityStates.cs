@@ -31,16 +31,12 @@ namespace StateMachine.Example {
         }
 
         public override IEnumerable<StateTransition<Entity>> GetTransitions() {
-            State<Entity>[] exceptions = new State<Entity>[] {
-                TalkState.Instance
-            };
-
             return new StateTransition<Entity>[] {
                 // Fallback transition
-                new StateTransition<Entity>( Entity.HasNoTarget, exceptions, this ),
+                new StateTransition<Entity>( Entity.HasNoTarget, TalkState.Instance, IdleState.Instance ),
 
                 // Exit transition
-                new StateTransition<Entity>( Entity.HasTarget, this, WalkState.Instance )
+                new StateTransition<Entity>(this, Entity.HasTarget, WalkState.Instance)
             };
         }
 
@@ -77,7 +73,7 @@ namespace StateMachine.Example {
         public override IEnumerable<StateTransition<Entity>> GetTransitions() {
             return new StateTransition<Entity>[] {
                 // Exit transition
-                new StateTransition<Entity>( Entity.IsTargetInRange, this, TalkState.Instance )
+                new StateTransition<Entity>(WalkState.Instance, Entity.IsTargetInRange, TalkState.Instance)
             };
         }
 
@@ -118,7 +114,7 @@ namespace StateMachine.Example {
         public override IEnumerable<StateTransition<Entity>> GetTransitions() {
             return new StateTransition<Entity>[] {
                 // Exit transition
-                new StateTransition<Entity>( Entity.DoneTalking, this, IdleState.Instance )
+                new StateTransition<Entity>(TalkState.Instance, Entity.DoneTalking, IdleState.Instance)
             };
         }
 

@@ -30,12 +30,21 @@ namespace StateMachine {
             ToState = toState;
         }
 
-        public StateTransition(Predicate<T> condition, State<T> fromState, State<T> toState)
+        public StateTransition(State<T> fromState, Predicate<T> condition, State<T> toState)
             : this() {
             exceptionStates = null;
 
             Condition = condition;
             FromState = fromState;
+            ToState = toState;
+        }
+
+        public StateTransition(Predicate<T> condition, State<T> exceptionState, State<T> toState)
+            : this() {
+            exceptionStates = new State<T>[1] { exceptionState };
+            FromState = null;
+
+            Condition = condition;
             ToState = toState;
         }
 

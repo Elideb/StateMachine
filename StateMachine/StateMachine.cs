@@ -48,7 +48,7 @@ namespace StateMachine {
         }
 
         public StateMachine<T> AddTransition(Predicate<T> condition, State<T> fromState, State<T> toState) {
-            return AddTransition( new StateTransition<T>( condition, fromState, toState ) );
+            return AddTransition( new StateTransition<T>( fromState, condition, toState ) );
         }
 
         public StateMachine<T> AddTransitions(IEnumerable<StateTransition<T>> trans) {
