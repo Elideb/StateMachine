@@ -129,8 +129,11 @@ namespace StateMachine {
         }
 
         public override int GetHashCode() {
-            int result = Condition.GetHashCode()
-                + ToState.GetHashCode();
+            int result = Condition.GetHashCode();
+
+            if (ToState != null) {
+                result += ToState.GetHashCode();
+            }
 
             if (null != fromStates) {
                 foreach (var state in fromStates) {
@@ -165,7 +168,7 @@ namespace StateMachine {
                 return true;
             }
 
-            if((array1 == null && array2 != null)
+            if ((array1 == null && array2 != null)
                 || (array1 != null && array2 == null)) {
                 return false;
             }
