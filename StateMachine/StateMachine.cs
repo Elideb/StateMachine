@@ -88,7 +88,11 @@ namespace StateMachine {
             // Check if a new state should be executed
             foreach (var transition in transitions) {
                 if (transition.IsViable( this )) {
-                    State = transition.ToState;
+                    if (transition.ToState == null) {
+                        State = PrevState;
+                    } else {
+                        State = transition.ToState;
+                    }
                     break;
                 }
             }
