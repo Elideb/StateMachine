@@ -110,9 +110,18 @@ namespace StateMachine {
         }
 
         public override int GetHashCode() {
-            return Condition.GetHashCode()
-              + FromState.GetHashCode()
-              + ToState.GetHashCode();
+            int result = Condition.GetHashCode()
+                + ToState.GetHashCode();
+
+            if (null != FromState) {
+                result += FromState.GetHashCode();
+            } else if (null != exceptionStates) {
+                foreach (var exception in exceptionStates) {
+                    result += exception.GetHashCode();
+                }
+            }
+
+            return result;
         }
 
         public override bool Equals(object obj) {
