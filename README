@@ -1,0 +1,3 @@
+DESCRIPTION
+-----------
+Implementation of a classic hierarchical state machine (Buckland style), with transitions isolated from the state methods.
