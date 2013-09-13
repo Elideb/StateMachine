@@ -58,10 +58,6 @@ namespace StateMachine {
             return this;
         }
 
-        public StateMachine<T> AddTransition(Predicate<T> condition, State<T> fromState, State<T> toState) {
-            return AddTransition( new StateTransition<T>( fromState, condition, toState ) );
-        }
-
         public StateMachine<T> AddTransitions(IEnumerable<StateTransition<T>> trans) {
             foreach (var transition in trans) {
                 transitions.Add( transition );
@@ -70,16 +66,18 @@ namespace StateMachine {
             return this;
         }
 
-        public void RemoveTransition(Predicate<T> condition, State<T> fromState, State<T> toState) {
+        public void RemoveTransition(StateTransition<T> toBeRemoved) {
             for (int i = 0; i < transitions.Count; ++i) {
-                var transition = transitions[i];
-                if (transition.Condition == condition
-                  && transition.FromState == fromState
-                  && transition.ToState == toState) {
-
+                if (toBeRemoved.Equals( transitions[i] )) {
                     transitions.RemoveAt( i );
                     break;
                 }
+            }
+        }
+
+        public void RemoveTransitions(IEnumerable<StateTransition<T>> toBeRemoved) {
+            foreach (var transition in toBeRemoved) {
+                RemoveTransition( transition );
             }
         }
 
