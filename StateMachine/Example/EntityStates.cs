@@ -22,8 +22,12 @@ namespace StateMachine.Example {
 
         private IdleState() {
             EnterMethod = null;
-            UpdateMethod = null;
+            UpdateMethod = Update;
             ExitMethod = null;
+        }
+
+        private void Update(Entity entity) {
+            // Look for target
         }
 
         public override IEnumerable<StateTransition<Entity>> GetTransitions() {
@@ -98,8 +102,8 @@ namespace StateMachine.Example {
         #endregion
 
         private TalkState() {
-            EnterMethod = null;
-            UpdateMethod = null;
+            EnterMethod = Enter;
+            UpdateMethod = Update;
             ExitMethod = null;
         }
 
@@ -114,7 +118,7 @@ namespace StateMachine.Example {
         public override IEnumerable<StateTransition<Entity>> GetTransitions() {
             return new StateTransition<Entity>[] {
                 // Exit transition
-                new StateTransition<Entity>( Entity.DoneTalking, this, WalkState.Instance )
+                new StateTransition<Entity>( Entity.DoneTalking, this, IdleState.Instance )
             };
         }
 
