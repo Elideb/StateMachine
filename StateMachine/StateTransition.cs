@@ -7,13 +7,18 @@ namespace StateMachine {
         public Predicate<T> Condition { get; private set; }
 
         /// <summary>
-        /// State this transition can start from.
-        /// Leave null if it should apply to all states.
+        /// States this transition can start from.
+        /// If none defined, start from any.
         /// </summary>
-        public State<T> FromState { get; private set; }
+        private State<T>[] fromStates;
+        public IEnumerable<State<T>> FromStates {
+            get {
+                return fromStates;
+            }
+        }
 
         /// <summary>
-        /// States this trancsition cannot start from.
+        /// States this transition cannot start from.
         /// </summary>
         private State<T>[] exceptionStates;
         public IEnumerable<State<T>> ExceptionStates {
@@ -35,7 +40,7 @@ namespace StateMachine {
         public StateTransition(Predicate<T> condition, State<T> toState)
             : this() {
             exceptionStates = null;
-            FromState = null;
+            fromStates = null;
 
             Condition = condition;
             ToState = toState;
@@ -52,7 +57,17 @@ namespace StateMachine {
             exceptionStates = null;
 
             Condition = condition;
-            FromState = fromState;
+            fromStates = new State<T>[1] { fromState };
+            ToState = toState;
+        }
+
+        public StateTransition(State<T>[] fromStates, Predicate<T> condition, State<T> toState)
+            : this() {
+            exceptionStates = null;
+
+            Condition = condition;
+            this.fromStates = new State<T>[fromStates.Length];
+            fromStates.CopyTo( this.fromStates, 0 );
             ToState = toState;
         }
 
@@ -64,9 +79,9 @@ namespace StateMachine {
         /// <param name="toState">State to change the state machine to when triggered.</param>
         public StateTransition(Predicate<T> condition, State<T> exceptionState, State<T> toState)
             : this() {
-            exceptionStates = new State<T>[1] { exceptionState };
-            FromState = null;
+            fromStates = null;
 
+            exceptionStates = new State<T>[1] { exceptionState };
             Condition = condition;
             ToState = toState;
         }
@@ -79,10 +94,10 @@ namespace StateMachine {
         /// <param name="toState">State to change the state machine to when triggered.</param>
         public StateTransition(Predicate<T> condition, State<T>[] exceptions, State<T> toState)
             : this() {
-            exceptionStates = new State<T>[exceptions.Length];
+            fromStates = null;
 
             Condition = condition;
-            FromState = null;
+            exceptionStates = new State<T>[exceptions.Length];
             exceptions.CopyTo( exceptionStates, 0 );
             ToState = toState;
         }
@@ -90,20 +105,24 @@ namespace StateMachine {
         public bool IsViable(StateMachine<T> stateMachine) {
             bool stateMatches = false;
 
-            if (stateMachine.State == FromState) {
+            if (fromStates != null) {
+                for (int i = 0; i < fromStates.Length; ++i) {
+                    if (stateMachine.State == fromStates[i]) {
+                        stateMatches = true;
+                        break;
+                    }
+                }
+            } else {
                 stateMatches = true;
-            }
 
-            if (FromState == null) {
                 if (exceptionStates.Length > 0) {
                     for (int i = 0; i < exceptionStates.Length; ++i) {
                         if (stateMachine.State == exceptionStates[i]) {
-                            return false;
+                            stateMatches = false;
+                            break;
                         }
                     }
                 }
-
-                stateMatches = true;
             }
 
             return stateMatches && Condition( stateMachine.Owner );
@@ -113,8 +132,10 @@ namespace StateMachine {
             int result = Condition.GetHashCode()
                 + ToState.GetHashCode();
 
-            if (null != FromState) {
-                result += FromState.GetHashCode();
+            if (null != fromStates) {
+                foreach (var state in fromStates) {
+                    result += state.GetHashCode();
+                }
             } else if (null != exceptionStates) {
                 foreach (var exception in exceptionStates) {
                     result += exception.GetHashCode();
@@ -134,31 +155,39 @@ namespace StateMachine {
 
         public bool Equals(StateTransition<T> other) {
             return Condition == other.Condition
-              && FromState == other.FromState
               && ToState == other.ToState
-              && EqualsExceptions( other.ExceptionStates );
+              && CompareStateArrays( fromStates, other.fromStates )
+              && CompareStateArrays( exceptionStates, other.exceptionStates );
         }
 
-        private bool EqualsExceptions(IEnumerable<State<T>> otherExceptions) {
-            if (otherExceptions == null && exceptionStates == null) {
+        private bool CompareStateArrays(State<T>[] array1, State<T>[] array2) {
+            if (array1 == null && array2 == null) {
                 return true;
             }
 
-            if ((otherExceptions == null && exceptionStates != null)
-              || (otherExceptions != null && exceptionStates == null)) {
+            if((array1 == null && array2 != null)
+                || (array1 != null && array2 == null)) {
                 return false;
             }
 
-            List<State<T>> allStates = new List<State<T>>( exceptionStates );
-            foreach (var exception in otherExceptions) {
-                if (allStates.Contains( exception )) {
-                    allStates.Remove( exception );
+            if (array1.Length != array2.Length) {
+                return false;
+            }
+
+            return _CompareStateArrays( array1, array2 );
+        }
+
+        private bool _CompareStateArrays(State<T>[] array1, State<T>[] array2) {
+            List<State<T>> unmatchedStates = new List<State<T>>( array1 );
+            foreach (var exception in array2) {
+                if (unmatchedStates.Contains( exception )) {
+                    unmatchedStates.Remove( exception );
                 } else {
-                    allStates.Add( exception );
+                    unmatchedStates.Add( exception );
                 }
             }
 
-            return allStates.Count == 0;
+            return unmatchedStates.Count == 0;
         }
 
     }
