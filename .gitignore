@@ -1,0 +1,6 @@
+*.sln
+*.suo
+StateMachine/Properties/
+*.csproj
+StateMachine/bin/
+StateMachine/obj/
