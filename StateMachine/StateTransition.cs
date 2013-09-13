@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace StateMachine {
 
-    public struct StateTransition<T> {
+    public class StateTransition<T> {
         public Predicate<T> Condition { get; private set; }
 
         /// <summary>
@@ -32,74 +32,157 @@ namespace StateMachine {
         /// </summary>
         public State<T> ToState { get; private set; }
 
-        /// <summary>
-        /// Create a transition which can trigger from any state.
-        /// </summary>
-        /// <param name="condition">Condition which would trigger the transition.</param>
-        /// <param name="toState">State to change the state machine to when triggered.</param>
-        public StateTransition(Predicate<T> condition, State<T> toState)
-            : this() {
-            exceptionStates = null;
-            fromStates = null;
+        #region Static builders
 
-            Condition = condition;
-            ToState = toState;
+        /// <summary>
+        /// Create a transition from any state to the given one.
+        /// </summary>
+        public static StateTransition<T> FromAnyTo(Predicate<T> condition, State<T> toState) {
+            if (null == toState) { throw new ArgumentNullException( "toState", "FromAnyTo requires a to state." ); }
+
+            return new StateTransition<T>() {
+                fromStates = null,
+                exceptionStates = null,
+                Condition = condition,
+                ToState = toState
+            };
         }
 
         /// <summary>
-        /// Create a transition which can only trigger for a specific state.
+        /// Create a transition from any state to the previous one.
         /// </summary>
-        /// <param name="fromState">State the machine must be executing to trigger the transition.</param>
-        /// <param name="condition">Condition which would trigger the transition.</param>
-        /// <param name="toState">State to change the state machine to when triggered.</param>
-        public StateTransition(State<T> fromState, Predicate<T> condition, State<T> toState)
-            : this() {
-            exceptionStates = null;
-
-            Condition = condition;
-            fromStates = new State<T>[1] { fromState };
-            ToState = toState;
-        }
-
-        public StateTransition(State<T>[] fromStates, Predicate<T> condition, State<T> toState)
-            : this() {
-            exceptionStates = null;
-
-            Condition = condition;
-            this.fromStates = new State<T>[fromStates.Length];
-            fromStates.CopyTo( this.fromStates, 0 );
-            ToState = toState;
+        public static StateTransition<T> FromAnyToPrev(Predicate<T> condition) {
+            return new StateTransition<T>() {
+                fromStates = null,
+                exceptionStates = null,
+                Condition = condition,
+                ToState = null
+            };
         }
 
         /// <summary>
-        /// Create a transition which can trigger from any state but the one specified.
+        /// Create a transition from a state to the given one.
         /// </summary>
-        /// <param name="condition">Condition which would trigger the transition.</param>
-        /// <param name="exceptionState">State from which the transition cannot be triggered.</param>
-        /// <param name="toState">State to change the state machine to when triggered.</param>
-        public StateTransition(Predicate<T> condition, State<T> exceptionState, State<T> toState)
-            : this() {
-            fromStates = null;
+        public static StateTransition<T> FromTo(State<T> fromState, Predicate<T> condition, State<T> toState) {
+            if (null == fromState) { throw new ArgumentNullException( "fromState", "FromTo requires a from state." ); }
+            if (null == toState) { throw new ArgumentNullException( "toState", "FromTo requires a to state." ); }
 
-            exceptionStates = new State<T>[1] { exceptionState };
-            Condition = condition;
-            ToState = toState;
+            return new StateTransition<T>() {
+                fromStates = new State<T>[] { fromState },
+                exceptionStates = null,
+                Condition = condition,
+                ToState = toState
+            };
         }
 
         /// <summary>
-        /// Create a transition which can trigger from any state but the ones specified.
+        /// Create a transition from several states to the given one.
         /// </summary>
-        /// <param name="condition">Condition which would trigger the transition.</param>
-        /// <param name="exceptions">States from which the transition cannot be triggered.</param>
-        /// <param name="toState">State to change the state machine to when triggered.</param>
-        public StateTransition(Predicate<T> condition, State<T>[] exceptions, State<T> toState)
-            : this() {
-            fromStates = null;
+        public static StateTransition<T> FromTo(State<T>[] fromStates, Predicate<T> condition, State<T> toState) {
+            if (null == fromStates) { throw new ArgumentNullException( "fromStates", "FromTo requires from states." ); }
+            if (null == toState) { throw new ArgumentNullException( "toState", "FromTo requires a to state." ); }
 
-            Condition = condition;
-            exceptionStates = new State<T>[exceptions.Length];
-            exceptions.CopyTo( exceptionStates, 0 );
-            ToState = toState;
+            return new StateTransition<T>() {
+                fromStates = fromStates,
+                exceptionStates = null,
+                Condition = condition,
+                ToState = toState
+            };
+        }
+
+        /// <summary>
+        /// Create a transition from a state to the previous one.
+        /// </summary>
+        public static StateTransition<T> FromToPrev(State<T> fromState, Predicate<T> condition) {
+            if (null == fromState) { throw new ArgumentNullException( "fromState", "FromToPrev requires a from state." ); }
+
+            return new StateTransition<T>() {
+                fromStates = new State<T>[] { fromState },
+                exceptionStates = null,
+                Condition = condition,
+                ToState = null
+            };
+        }
+
+        /// <summary>
+        /// Create a transition from several states to the previous one.
+        /// </summary>
+        public static StateTransition<T> FromToPrev(State<T>[] fromStates, Predicate<T> condition) {
+            if (null == fromStates) { throw new ArgumentNullException( "fromStates", "FromToPrev requires from states." ); }
+
+            return new StateTransition<T>() {
+                fromStates = fromStates,
+                exceptionStates = null,
+                Condition = condition,
+                ToState = null
+            };
+        }
+
+        /// <summary>
+        /// Create a transition from any state but the exception to the given one.
+        /// </summary>
+        public static StateTransition<T> NotFromTo(State<T> exception, Predicate<T> condition, State<T> toState) {
+            if (null == exception) { throw new ArgumentNullException( "exception", "NotFromTo requires an exception state." ); }
+            if (null == toState) { throw new ArgumentNullException( "toState", "NotFromTo requires a to state." ); }
+
+            return new StateTransition<T>() {
+                fromStates = null,
+                exceptionStates = new State<T>[] { exception },
+                Condition = condition,
+                ToState = toState
+            };
+        }
+
+        /// <summary>
+        /// Create a transition from any state but the exceptions to the given one.
+        /// </summary>
+        public static StateTransition<T> NotFromTo(State<T>[] exceptions, Predicate<T> condition, State<T> toState) {
+            if (null == exceptions) { throw new ArgumentNullException( "exceptions", "NotFromTo requires exception states." ); }
+            if (null == toState) { throw new ArgumentNullException( "toState", "NotFromTo requires a to state." ); }
+
+            return new StateTransition<T>() {
+                fromStates = null,
+                exceptionStates = exceptions,
+                Condition = condition,
+                ToState = toState
+            };
+        }
+
+        /// <summary>
+        /// Create a transition from any state but the exception to the previous one.
+        /// </summary>
+        public static StateTransition<T> NotFromToPrev(State<T> exception, Predicate<T> condition) {
+            if (null == exception) { throw new ArgumentNullException( "exception", "NotFromToPrev requires an exception state." ); }
+
+            return new StateTransition<T>() {
+                fromStates = null,
+                exceptionStates = new State<T>[] { exception },
+                Condition = condition,
+                ToState = null
+            };
+        }
+
+        /// <summary>
+        /// Create a transition from any state but the exceptions to the previous one.
+        /// </summary>
+        public static StateTransition<T> NotFromToPrev(State<T>[] exceptions, Predicate<T> condition) {
+            if (null == exceptions) { throw new ArgumentNullException( "exceptions", "NotFromToPrev requires exception states." ); }
+
+            return new StateTransition<T>() {
+                fromStates = null,
+                exceptionStates = exceptions,
+                Condition = condition,
+                ToState = null
+            };
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Cannot build a StateTransition, except from the static builders.
+        /// </summary>
+        private StateTransition() {
+
         }
 
         public bool IsViable(StateMachine<T> stateMachine) {
