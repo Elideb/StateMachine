@@ -5,13 +5,10 @@ namespace StateMachine {
 
     public abstract class State<T> {
 
-        public Action<T> OnEnter { get { return EnterMethod; } }
-        public Action<T> OnUpdate { get { return UpdateMethod; } }
-        public Action<T> OnExit { get { return ExitMethod; } }
+        public Action<T> OnEnter { get; protected set; }
+        public Action<T> OnUpdate { get; protected set; }
+        public Action<T> OnExit { get; protected set; }
 
-        protected Action<T> EnterMethod;
-        protected Action<T> UpdateMethod;
-        protected Action<T> ExitMethod;
     }
 
 }

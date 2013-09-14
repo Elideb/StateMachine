@@ -21,9 +21,9 @@ namespace StateMachine.Example {
         #endregion
 
         private IdleState() {
-            EnterMethod = null;
-            UpdateMethod = Update;
-            ExitMethod = null;
+            OnEnter = null;
+            OnUpdate = Update;
+            OnExit = null;
         }
 
         private void Update(Entity entity) {
@@ -51,13 +51,9 @@ namespace StateMachine.Example {
         #endregion
 
         private WalkState() {
-            EnterMethod = null;
-            UpdateMethod = Update;
-            ExitMethod = null;
-        }
-
-        private void Update(Entity entity) {
-            entity.Move( 2 );
+            OnEnter = null;
+            OnUpdate = (entity) => entity.Move( 2 );
+            OnExit = null;
         }
 
     }
@@ -81,17 +77,9 @@ namespace StateMachine.Example {
         #endregion
 
         private TalkState() {
-            EnterMethod = Enter;
-            UpdateMethod = Update;
-            ExitMethod = null;
-        }
-
-        public void Enter(Entity entity) {
-            entity.PhrasesLeft = 10;
-        }
-
-        public void Update(Entity entity) {
-            --entity.PhrasesLeft;
+            OnEnter = (entity) => entity.PhrasesLeft = 10;
+            OnUpdate = (entity) => --entity.PhrasesLeft;
+            OnExit = null;
         }
 
     }
