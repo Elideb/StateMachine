@@ -32,154 +32,19 @@ namespace StateMachine {
         /// </summary>
         public State<T> ToState { get; private set; }
 
-        #region Static builders
+        public static ConfigFrom From(params State<T>[] states) {
+            if (states == null) { throw new ArgumentNullException( "states", "At least an origin state must be defined" ); }
+            if (states.Length == 0) { throw new ArgumentException( "states", "At least an origin state must be defined" ); }
 
-        /// <summary>
-        /// Create a transition from any state to the given one.
-        /// </summary>
-        public static Transition<T> FromAnyTo(Func<bool> condition, State<T> toState) {
-            if (null == toState) { throw new ArgumentNullException( "toState", "FromAnyTo requires a to state." ); }
+            return new ConfigFrom( states );
+        }
 
-            return new Transition<T>() {
-                fromStates = null,
-                exceptionStates = null,
-                Condition = condition,
-                ToState = toState
-            };
+        public static ConfigFromAny FromAny() {
+            return new ConfigFromAny();
         }
 
         /// <summary>
-        /// Create a transition from any state to the previous one.
-        /// </summary>
-        public static Transition<T> FromAnyToPrev(Func<bool> condition) {
-            return new Transition<T>() {
-                fromStates = null,
-                exceptionStates = null,
-                Condition = condition,
-                ToState = null
-            };
-        }
-
-        /// <summary>
-        /// Create a transition from a state to the given one.
-        /// </summary>
-        public static Transition<T> FromTo(State<T> fromState, Func<bool> condition, State<T> toState) {
-            if (null == fromState) { throw new ArgumentNullException( "fromState", "FromTo requires a from state." ); }
-            if (null == toState) { throw new ArgumentNullException( "toState", "FromTo requires a to state." ); }
-
-            return new Transition<T>() {
-                fromStates = new State<T>[] { fromState },
-                exceptionStates = null,
-                Condition = condition,
-                ToState = toState
-            };
-        }
-
-        /// <summary>
-        /// Create a transition from several states to the given one.
-        /// </summary>
-        public static Transition<T> FromTo(State<T>[] fromStates, Func<bool> condition, State<T> toState) {
-            if (null == fromStates) { throw new ArgumentNullException( "fromStates", "FromTo requires from states." ); }
-            if (null == toState) { throw new ArgumentNullException( "toState", "FromTo requires a to state." ); }
-
-            return new Transition<T>() {
-                fromStates = fromStates,
-                exceptionStates = null,
-                Condition = condition,
-                ToState = toState
-            };
-        }
-
-        /// <summary>
-        /// Create a transition from a state to the previous one.
-        /// </summary>
-        public static Transition<T> FromToPrev(State<T> fromState, Func<bool> condition) {
-            if (null == fromState) { throw new ArgumentNullException( "fromState", "FromToPrev requires a from state." ); }
-
-            return new Transition<T>() {
-                fromStates = new State<T>[] { fromState },
-                exceptionStates = null,
-                Condition = condition,
-                ToState = null
-            };
-        }
-
-        /// <summary>
-        /// Create a transition from several states to the previous one.
-        /// </summary>
-        public static Transition<T> FromToPrev(State<T>[] fromStates, Func<bool> condition) {
-            if (null == fromStates) { throw new ArgumentNullException( "fromStates", "FromToPrev requires from states." ); }
-
-            return new Transition<T>() {
-                fromStates = fromStates,
-                exceptionStates = null,
-                Condition = condition,
-                ToState = null
-            };
-        }
-
-        /// <summary>
-        /// Create a transition from any state but the exception to the given one.
-        /// </summary>
-        public static Transition<T> FromAnyButTo(State<T> exception, Func<bool> condition, State<T> toState) {
-            if (null == exception) { throw new ArgumentNullException( "exception", "NotFromTo requires an exception state." ); }
-            if (null == toState) { throw new ArgumentNullException( "toState", "NotFromTo requires a to state." ); }
-
-            return new Transition<T>() {
-                fromStates = null,
-                exceptionStates = new State<T>[] { exception },
-                Condition = condition,
-                ToState = toState
-            };
-        }
-
-        /// <summary>
-        /// Create a transition from any state but the exceptions to the given one.
-        /// </summary>
-        public static Transition<T> FromAnyButTo(State<T>[] exceptions, Func<bool> condition, State<T> toState) {
-            if (null == exceptions) { throw new ArgumentNullException( "exceptions", "NotFromTo requires exception states." ); }
-            if (null == toState) { throw new ArgumentNullException( "toState", "NotFromTo requires a to state." ); }
-
-            return new Transition<T>() {
-                fromStates = null,
-                exceptionStates = exceptions,
-                Condition = condition,
-                ToState = toState
-            };
-        }
-
-        /// <summary>
-        /// Create a transition from any state but the exception to the previous one.
-        /// </summary>
-        public static Transition<T> FromAnyButToPrev(State<T> exception, Func<bool> condition) {
-            if (null == exception) { throw new ArgumentNullException( "exception", "NotFromToPrev requires an exception state." ); }
-
-            return new Transition<T>() {
-                fromStates = null,
-                exceptionStates = new State<T>[] { exception },
-                Condition = condition,
-                ToState = null
-            };
-        }
-
-        /// <summary>
-        /// Create a transition from any state but the exceptions to the previous one.
-        /// </summary>
-        public static Transition<T> FromAnyButToPrev(State<T>[] exceptions, Func<bool> condition) {
-            if (null == exceptions) { throw new ArgumentNullException( "exceptions", "NotFromToPrev requires exception states." ); }
-
-            return new Transition<T>() {
-                fromStates = null,
-                exceptionStates = exceptions,
-                Condition = condition,
-                ToState = null
-            };
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Cannot build a StateTransition, except from the static builders.
+        /// Cannot build a StateTransition, except from the static configurators.
         /// </summary>
         private Transition() {
 
@@ -276,6 +141,105 @@ namespace StateMachine {
             return unmatchedStates.Count == 0;
         }
 
+        internal class Config {
+            protected State<T>[] Origins { get; private set; }
+            protected State<T>[] Exceptions { get; private set; }
+
+            internal Config(State<T>[] origins, State<T>[] exceptions) {
+                Origins = origins;
+                Exceptions = exceptions;
+            }
+
+            public ConfigFromTo To(State<T> state) {
+                if (state == null) { throw new ArgumentNullException( "state", "Transition must define a target state." ); }
+
+                return new ConfigFromTo( Origins, Exceptions, state );
+            }
+
+            public ConfigFromTo ToPrev() {
+                return new ConfigFromTo( Origins, Exceptions, null );
+            }
+
+        }
+
+        public class ConfigFrom : Config {
+
+            internal ConfigFrom(State<T>[] origins)
+                : base( origins, null ) {
+            }
+
+            public ConfigFrom From(params State<T>[] states) {
+                if (states == null) { throw new ArgumentNullException( "states", "At least one origin state required." ); }
+                if (states.Length == 0) { throw new ArgumentException( "At least one origin state required.", "states" ); }
+
+                State<T>[] newOrigins = null;
+                if (Origins != null) {
+                    newOrigins = new State<T>[Origins.Length + states.Length];
+                    Origins.CopyTo( newOrigins, 0 );
+                    states.CopyTo( newOrigins, Origins.Length );
+                } else {
+                    newOrigins = new State<T>[states.Length];
+                    states.CopyTo( newOrigins, 0 );
+                }
+
+                return new ConfigFrom( newOrigins );
+            }
+
+        }
+
+        public class ConfigFromAny : Config {
+
+            internal ConfigFromAny()
+                : base( null, null ) {
+            }
+
+            internal ConfigFromAny(State<T>[] exceptions)
+                : base( null, exceptions ) {
+            }
+
+            public ConfigFromAny Except(params State<T>[] states) {
+                if(states == null) { throw new ArgumentNullException("states", "At least one exceptional state required."); }
+                if(states.Length == 0) { throw new ArgumentException( "At least one exceptional state required.", "states" ); }
+
+                State<T>[] newExceptions = null;
+                if (Exceptions != null) {
+                    newExceptions = new State<T>[Exceptions.Length + states.Length];
+                    Exceptions.CopyTo( newExceptions, 0 );
+                    states.CopyTo( newExceptions, Exceptions.Length );
+                } else {
+                    newExceptions = new State<T>[states.Length];
+                    states.CopyTo( newExceptions, 0 );
+                }
+
+                return new ConfigFromAny( newExceptions );
+            }
+
+        }
+
+        public class ConfigFromTo {
+
+            private State<T>[] Origins { get; set; }
+            private State<T>[] Exceptions { get; set;}
+            private State<T> Target { get; set;}
+
+            internal ConfigFromTo(State<T>[] origins, State<T>[] exceptions, State<T> target) {
+                Origins = origins;
+                Exceptions = exceptions;
+                Target = target;
+            }
+
+            public Transition<T> When(Func<bool> condition) {
+                if (condition == null) { throw new ArgumentNullException( "condition", "A condition must be configured" ); }
+
+                return new Transition<T>() {
+                    fromStates = Origins,
+                    exceptionStates = Exceptions,
+                    ToState = Target,
+                    Condition = condition
+                };
+            }
+
+        }
     }
 
 }
