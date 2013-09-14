@@ -34,20 +34,15 @@ namespace StateMachine.Example {
 
         public void Initialize() {
             State<Entity>[] idleExceptions = new State<Entity>[] {
-                IdleState.Instance,
-                TalkState.Instance };
+                EntityStates.Idle,
+                EntityStates.Talk };
 
-            State<Entity> walkState = State<Entity>.Build(
-                null,
-                (entity) => entity.Move( 2 ),
-                null );
-
-            stateMachine = new StateMachine<Entity>( this, IdleState.Instance )
+            stateMachine = new StateMachine<Entity>( this, EntityStates.Idle )
                 .AddTransitions(
-                    Transition<Entity>.FromAnyButTo( idleExceptions, HasNoTarget, IdleState.Instance ),
-                    Transition<Entity>.FromTo( IdleState.Instance, HasTarget, walkState ),
-                    Transition<Entity>.FromTo( walkState, IsTargetInRange, TalkState.Instance ),
-                    Transition<Entity>.FromTo( TalkState.Instance, DoneTalking, IdleState.Instance ) );
+                    Transition<Entity>.FromAnyButTo( idleExceptions, HasNoTarget, EntityStates.Idle ),
+                    Transition<Entity>.FromTo( EntityStates.Idle, HasTarget, EntityStates.Walk ),
+                    Transition<Entity>.FromTo( EntityStates.Walk, IsTargetInRange, EntityStates.Talk ),
+                    Transition<Entity>.FromTo( EntityStates.Talk, DoneTalking, EntityStates.Idle ) );
         }
 
         public void Update() {

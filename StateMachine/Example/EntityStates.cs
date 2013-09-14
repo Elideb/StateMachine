@@ -2,59 +2,65 @@
 
 namespace StateMachine.Example {
 
-    class IdleState : State<Entity> {
+    static class EntityStates {
 
-        #region Singleton
+        #region Idle state
 
-        private static IdleState instance;
-
-        public static IdleState Instance {
+        private static State<Entity> idle = null;
+        public static State<Entity> Idle {
             get {
-                if (IdleState.instance == null) {
-                    IdleState.instance = new IdleState();
+                if (idle == null) {
+                    idle = State<Entity>.Build(
+                        null,
+                        IdleUpdate,
+                        null );
                 }
 
-                return IdleState.instance;
+                return idle;
             }
         }
 
-        #endregion
-
-        private IdleState() {
-            OnEnter = null;
-            OnUpdate = Update;
-            OnExit = null;
-        }
-
-        private void Update(Entity entity) {
+        private static void IdleUpdate(Entity ett) {
             // Look for target
         }
 
-    }
+        #endregion
 
-    class TalkState : State<Entity> {
+        #region Walk state
 
-        #region Singleton
-
-        private static TalkState instance;
-
-        public static TalkState Instance {
+        private static State<Entity> walk = null;
+        public static State<Entity> Walk {
             get {
-                if (TalkState.instance == null) {
-                    TalkState.instance = new TalkState();
+                if (walk == null) {
+                    walk = State<Entity>.Build(
+                        null,
+                        (ett) => ett.Move( 2 ),
+                        null );
                 }
 
-                return TalkState.instance;
+                return walk;
             }
         }
 
         #endregion
 
-        private TalkState() {
-            OnEnter = (entity) => entity.PhrasesLeft = 10;
-            OnUpdate = (entity) => --entity.PhrasesLeft;
-            OnExit = null;
+        #region Talk state
+
+        private static State<Entity> talk = null;
+        public static State<Entity> Talk {
+            get {
+                if (talk == null) {
+                    talk = State<Entity>.Build(
+                        (ett) => ett.PhrasesLeft = 10,
+                        (ett) => --ett.PhrasesLeft,
+                        null );
+                }
+
+                return talk;
+            }
         }
+
+        #endregion
 
     }
 
