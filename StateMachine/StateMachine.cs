@@ -95,7 +95,7 @@ namespace StateMachine {
         public void Update() {
             // Check if a new state should be executed
             foreach (var transition in transitions) {
-                if (transition.IsViable( this )) {
+                if (transition.Evaluate( State )) {
                     if (transition.ToState == null) {
                         State = PrevState;
                     } else {

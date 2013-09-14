@@ -185,12 +185,12 @@ namespace StateMachine {
 
         }
 
-        public bool IsViable(StateMachine<T> stateMachine) {
+        public bool Evaluate(State<T> currentState) {
             bool stateMatches = false;
 
             if (fromStates != null) {
                 for (int i = 0; i < fromStates.Length; ++i) {
-                    if (stateMachine.State == fromStates[i]) {
+                    if (currentState == fromStates[i]) {
                         stateMatches = true;
                         break;
                     }
@@ -200,7 +200,7 @@ namespace StateMachine {
 
                 if (exceptionStates.Length > 0) {
                     for (int i = 0; i < exceptionStates.Length; ++i) {
-                        if (stateMachine.State == exceptionStates[i]) {
+                        if (currentState == exceptionStates[i]) {
                             stateMatches = false;
                             break;
                         }
