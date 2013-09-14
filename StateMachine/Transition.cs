@@ -4,6 +4,10 @@ using System.Collections.Generic;
 namespace StateMachine {
 
     public class Transition<T> {
+
+        /// <summary>
+        /// Condition which determines if the transition is triggered.
+        /// </summary>
         public Func<bool> Condition { get; private set; }
 
         /// <summary>
@@ -32,6 +36,11 @@ namespace StateMachine {
         /// </summary>
         public State<T> ToState { get; private set; }
 
+        /// <summary>
+        /// Start configuring a transition which will start from any of the given states.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If states is null.</exception>
+        /// <exception cref="ArgumentException">If states is empty.</exception>
         public static ConfigFrom From(params State<T>[] states) {
             if (states == null) { throw new ArgumentNullException( "states", "At least an origin state must be defined" ); }
             if (states.Length == 0) { throw new ArgumentException( "states", "At least an origin state must be defined" ); }
@@ -39,6 +48,10 @@ namespace StateMachine {
             return new ConfigFrom( states );
         }
 
+        /// <summary>
+        /// Start configuring a transition which can trigger from any state.
+        /// Exceptions can be added in the resulting configuration.
+        /// </summary>
         public static ConfigFromAny FromAny() {
             return new ConfigFromAny();
         }
@@ -150,12 +163,19 @@ namespace StateMachine {
                 Exceptions = exceptions;
             }
 
+            /// <summary>
+            /// When the transition is triggered, the state machine will activate the indicated state.
+            /// </summary>
+            /// <exception cref="ArgumentNullException">If the state is null.</exception>
             public ConfigFromTo To(State<T> state) {
                 if (state == null) { throw new ArgumentNullException( "state", "Transition must define a target state." ); }
 
                 return new ConfigFromTo( Origins, Exceptions, state );
             }
 
+            /// <summary>
+            /// When the transition is triggered, the state machine will activate the previous state.
+            /// </summary>
             public ConfigFromTo ToPrev() {
                 return new ConfigFromTo( Origins, Exceptions, null );
             }
@@ -168,6 +188,11 @@ namespace StateMachine {
                 : base( origins, null ) {
             }
 
+            /// <summary>
+            /// Add more states from which the transition can trigger.
+            /// </summary>
+            /// <exception cref="ArgumentNullException">If states is null.</exception>
+            /// <exception cref="ArgumentException">If states is empty.</exception>
             public ConfigFrom From(params State<T>[] states) {
                 if (states == null) { throw new ArgumentNullException( "states", "At least one origin state required." ); }
                 if (states.Length == 0) { throw new ArgumentException( "At least one origin state required.", "states" ); }
@@ -197,6 +222,11 @@ namespace StateMachine {
                 : base( null, exceptions ) {
             }
 
+            /// <summary>
+            /// Add states from which the transition cannot trigger.
+            /// </summary>
+            /// <exception cref="ArgumentNullException">If states is null.</exception>
+            /// <exception cref="ArgumentException">If states is empty.</exception>
             public ConfigFromAny Except(params State<T>[] states) {
                 if(states == null) { throw new ArgumentNullException("states", "At least one exceptional state required."); }
                 if(states.Length == 0) { throw new ArgumentException( "At least one exceptional state required.", "states" ); }
@@ -228,6 +258,12 @@ namespace StateMachine {
                 Target = target;
             }
 
+            /// <summary>
+            /// Generate a transition which will trigger when the current state matches the restrictions
+            /// and the condition is met.
+            /// </summary>
+            /// <returns>A properly configured transition, ready to be used.</returns>
+            /// <exception cref="ArgumentNullException">If condition is null.</exception>
             public Transition<T> When(Func<bool> condition) {
                 if (condition == null) { throw new ArgumentNullException( "condition", "A condition must be configured" ); }
 
