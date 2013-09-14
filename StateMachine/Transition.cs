@@ -141,7 +141,7 @@ namespace StateMachine {
             return unmatchedStates.Count == 0;
         }
 
-        internal class Config {
+        public class Config {
             protected State<T>[] Origins { get; private set; }
             protected State<T>[] Exceptions { get; private set; }
 
