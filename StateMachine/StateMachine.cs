@@ -40,7 +40,7 @@ namespace StateMachine {
         /// <summary>
         /// Transitions which determine this state machine's behaviour.
         /// </summary>
-        private List<StateTransition<T>> transitions = new List<StateTransition<T>>();
+        private List<Transition<T>> transitions = new List<Transition<T>>();
 
         /// <summary>
         /// Create a new state machine.
@@ -52,13 +52,13 @@ namespace StateMachine {
             State = initialState;
         }
 
-        public StateMachine<T> AddTransition(StateTransition<T> transition) {
+        public StateMachine<T> AddTransition(Transition<T> transition) {
             transitions.Add( transition );
 
             return this;
         }
 
-        public StateMachine<T> AddTransitions(params StateTransition<T>[] trans) {
+        public StateMachine<T> AddTransitions(params Transition<T>[] trans) {
             foreach (var transition in trans) {
               transitions.Add( transition );
             }
@@ -66,7 +66,7 @@ namespace StateMachine {
             return this;
         }
 
-        public StateMachine<T> AddTransitions(IEnumerable<StateTransition<T>> trans) {
+        public StateMachine<T> AddTransitions(IEnumerable<Transition<T>> trans) {
             foreach (var transition in trans) {
                 transitions.Add( transition );
             }
@@ -74,7 +74,7 @@ namespace StateMachine {
             return this;
         }
 
-        public void RemoveTransition(StateTransition<T> toBeRemoved) {
+        public void RemoveTransition(Transition<T> toBeRemoved) {
             for (int i = 0; i < transitions.Count; ++i) {
                 if (toBeRemoved.Equals( transitions[i] )) {
                     transitions.RemoveAt( i );
@@ -83,7 +83,7 @@ namespace StateMachine {
             }
         }
 
-        public void RemoveTransitions(IEnumerable<StateTransition<T>> toBeRemoved) {
+        public void RemoveTransitions(IEnumerable<Transition<T>> toBeRemoved) {
             foreach (var transition in toBeRemoved) {
                 RemoveTransition( transition );
             }
