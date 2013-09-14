@@ -32,32 +32,6 @@ namespace StateMachine.Example {
 
     }
 
-    class WalkState : State<Entity> {
-
-        #region Singleton
-
-        private static WalkState instance;
-
-        public static WalkState Instance {
-            get {
-                if (WalkState.instance == null) {
-                    WalkState.instance = new WalkState();
-                }
-
-                return WalkState.instance;
-            }
-        }
-
-        #endregion
-
-        private WalkState() {
-            OnEnter = null;
-            OnUpdate = (entity) => entity.Move( 2 );
-            OnExit = null;
-        }
-
-    }
-
     class TalkState : State<Entity> {
 
         #region Singleton

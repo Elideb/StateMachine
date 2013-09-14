@@ -37,11 +37,16 @@ namespace StateMachine.Example {
                 IdleState.Instance,
                 TalkState.Instance };
 
+            State<Entity> walkState = State<Entity>.Build(
+                null,
+                (entity) => entity.Move( 2 ),
+                null );
+
             stateMachine = new StateMachine<Entity>( this, IdleState.Instance )
                 .AddTransitions(
                     Transition<Entity>.FromAnyButTo( idleExceptions, HasNoTarget, IdleState.Instance ),
-                    Transition<Entity>.FromTo( IdleState.Instance, HasTarget, WalkState.Instance ),
-                    Transition<Entity>.FromTo( WalkState.Instance, IsTargetInRange, TalkState.Instance ),
+                    Transition<Entity>.FromTo( IdleState.Instance, HasTarget, walkState ),
+                    Transition<Entity>.FromTo( walkState, IsTargetInRange, TalkState.Instance ),
                     Transition<Entity>.FromTo( TalkState.Instance, DoneTalking, IdleState.Instance ) );
         }
 
