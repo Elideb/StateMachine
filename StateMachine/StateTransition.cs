@@ -121,7 +121,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state but the exception to the given one.
         /// </summary>
-        public static StateTransition<T> NotFromTo(State<T> exception, Predicate<T> condition, State<T> toState) {
+        public static StateTransition<T> FromAnyButTo(State<T> exception, Predicate<T> condition, State<T> toState) {
             if (null == exception) { throw new ArgumentNullException( "exception", "NotFromTo requires an exception state." ); }
             if (null == toState) { throw new ArgumentNullException( "toState", "NotFromTo requires a to state." ); }
 
@@ -136,7 +136,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state but the exceptions to the given one.
         /// </summary>
-        public static StateTransition<T> NotFromTo(State<T>[] exceptions, Predicate<T> condition, State<T> toState) {
+        public static StateTransition<T> FromAnyButTo(State<T>[] exceptions, Predicate<T> condition, State<T> toState) {
             if (null == exceptions) { throw new ArgumentNullException( "exceptions", "NotFromTo requires exception states." ); }
             if (null == toState) { throw new ArgumentNullException( "toState", "NotFromTo requires a to state." ); }
 
@@ -151,7 +151,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state but the exception to the previous one.
         /// </summary>
-        public static StateTransition<T> NotFromToPrev(State<T> exception, Predicate<T> condition) {
+        public static StateTransition<T> FromAnyButToPrev(State<T> exception, Predicate<T> condition) {
             if (null == exception) { throw new ArgumentNullException( "exception", "NotFromToPrev requires an exception state." ); }
 
             return new StateTransition<T>() {
@@ -165,7 +165,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state but the exceptions to the previous one.
         /// </summary>
-        public static StateTransition<T> NotFromToPrev(State<T>[] exceptions, Predicate<T> condition) {
+        public static StateTransition<T> FromAnyButToPrev(State<T>[] exceptions, Predicate<T> condition) {
             if (null == exceptions) { throw new ArgumentNullException( "exceptions", "NotFromToPrev requires exception states." ); }
 
             return new StateTransition<T>() {

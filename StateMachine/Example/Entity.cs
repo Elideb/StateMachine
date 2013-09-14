@@ -39,7 +39,7 @@ namespace StateMachine.Example {
 
             stateMachine = new StateMachine<Entity>( this, IdleState.Instance )
                 .AddTransitions(
-                    StateTransition<Entity>.NotFromTo( idleExceptions, HasNoTarget, IdleState.Instance ),
+                    StateTransition<Entity>.FromAnyButTo( idleExceptions, HasNoTarget, IdleState.Instance ),
                     StateTransition<Entity>.FromTo( IdleState.Instance, HasTarget, WalkState.Instance ),
                     StateTransition<Entity>.FromTo( WalkState.Instance, IsTargetInRange, TalkState.Instance ),
                     StateTransition<Entity>.FromTo( TalkState.Instance, DoneTalking, IdleState.Instance ) );
