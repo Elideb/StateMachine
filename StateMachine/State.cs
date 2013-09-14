@@ -12,8 +12,6 @@ namespace StateMachine {
         protected Action<T> EnterMethod;
         protected Action<T> UpdateMethod;
         protected Action<T> ExitMethod;
-
-        public abstract IEnumerable<StateTransition<T>> GetTransitions();
     }
 
 }

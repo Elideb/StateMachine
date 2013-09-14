@@ -30,13 +30,6 @@ namespace StateMachine.Example {
             // Look for target
         }
 
-        public override IEnumerable<StateTransition<Entity>> GetTransitions() {
-            return new StateTransition<Entity>[] {
-                StateTransition<Entity>.NotFromTo( TalkState.Instance, Entity.HasNoTarget, IdleState.Instance ),
-                StateTransition<Entity>.FromTo( IdleState.Instance, Entity.HasTarget, WalkState.Instance )
-            };
-        }
-
     }
 
     class WalkState : State<Entity> {
@@ -65,12 +58,6 @@ namespace StateMachine.Example {
 
         private void Update(Entity entity) {
             entity.Move( 2 );
-        }
-
-        public override IEnumerable<StateTransition<Entity>> GetTransitions() {
-            return new StateTransition<Entity>[] {
-                StateTransition<Entity>.FromTo( WalkState.Instance, Entity.IsTargetInRange, TalkState.Instance )
-            };
         }
 
     }
@@ -105,12 +92,6 @@ namespace StateMachine.Example {
 
         public void Update(Entity entity) {
             --entity.PhrasesLeft;
-        }
-
-        public override IEnumerable<StateTransition<Entity>> GetTransitions() {
-            return new StateTransition<Entity>[] {
-                StateTransition<Entity>.FromTo( TalkState.Instance, Entity.DoneTalking, IdleState.Instance )
-            };
         }
 
     }
