@@ -58,6 +58,14 @@ namespace StateMachine {
             return this;
         }
 
+        public StateMachine<T> AddTransitions(params StateTransition<T>[] trans) {
+            foreach (var transition in trans) {
+              transitions.Add( transition );
+            }
+
+            return this;
+        }
+
         public StateMachine<T> AddTransitions(IEnumerable<StateTransition<T>> trans) {
             foreach (var transition in trans) {
                 transitions.Add( transition );
