@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace StateMachine {
 
     public class StateTransition<T> {
-        public Predicate<T> Condition { get; private set; }
+        public Func<bool> Condition { get; private set; }
 
         /// <summary>
         /// States this transition can start from.
@@ -37,7 +37,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state to the given one.
         /// </summary>
-        public static StateTransition<T> FromAnyTo(Predicate<T> condition, State<T> toState) {
+        public static StateTransition<T> FromAnyTo(Func<bool> condition, State<T> toState) {
             if (null == toState) { throw new ArgumentNullException( "toState", "FromAnyTo requires a to state." ); }
 
             return new StateTransition<T>() {
@@ -51,7 +51,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state to the previous one.
         /// </summary>
-        public static StateTransition<T> FromAnyToPrev(Predicate<T> condition) {
+        public static StateTransition<T> FromAnyToPrev(Func<bool> condition) {
             return new StateTransition<T>() {
                 fromStates = null,
                 exceptionStates = null,
@@ -63,7 +63,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from a state to the given one.
         /// </summary>
-        public static StateTransition<T> FromTo(State<T> fromState, Predicate<T> condition, State<T> toState) {
+        public static StateTransition<T> FromTo(State<T> fromState, Func<bool> condition, State<T> toState) {
             if (null == fromState) { throw new ArgumentNullException( "fromState", "FromTo requires a from state." ); }
             if (null == toState) { throw new ArgumentNullException( "toState", "FromTo requires a to state." ); }
 
@@ -78,7 +78,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from several states to the given one.
         /// </summary>
-        public static StateTransition<T> FromTo(State<T>[] fromStates, Predicate<T> condition, State<T> toState) {
+        public static StateTransition<T> FromTo(State<T>[] fromStates, Func<bool> condition, State<T> toState) {
             if (null == fromStates) { throw new ArgumentNullException( "fromStates", "FromTo requires from states." ); }
             if (null == toState) { throw new ArgumentNullException( "toState", "FromTo requires a to state." ); }
 
@@ -93,7 +93,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from a state to the previous one.
         /// </summary>
-        public static StateTransition<T> FromToPrev(State<T> fromState, Predicate<T> condition) {
+        public static StateTransition<T> FromToPrev(State<T> fromState, Func<bool> condition) {
             if (null == fromState) { throw new ArgumentNullException( "fromState", "FromToPrev requires a from state." ); }
 
             return new StateTransition<T>() {
@@ -107,7 +107,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from several states to the previous one.
         /// </summary>
-        public static StateTransition<T> FromToPrev(State<T>[] fromStates, Predicate<T> condition) {
+        public static StateTransition<T> FromToPrev(State<T>[] fromStates, Func<bool> condition) {
             if (null == fromStates) { throw new ArgumentNullException( "fromStates", "FromToPrev requires from states." ); }
 
             return new StateTransition<T>() {
@@ -121,7 +121,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state but the exception to the given one.
         /// </summary>
-        public static StateTransition<T> FromAnyButTo(State<T> exception, Predicate<T> condition, State<T> toState) {
+        public static StateTransition<T> FromAnyButTo(State<T> exception, Func<bool> condition, State<T> toState) {
             if (null == exception) { throw new ArgumentNullException( "exception", "NotFromTo requires an exception state." ); }
             if (null == toState) { throw new ArgumentNullException( "toState", "NotFromTo requires a to state." ); }
 
@@ -136,7 +136,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state but the exceptions to the given one.
         /// </summary>
-        public static StateTransition<T> FromAnyButTo(State<T>[] exceptions, Predicate<T> condition, State<T> toState) {
+        public static StateTransition<T> FromAnyButTo(State<T>[] exceptions, Func<bool> condition, State<T> toState) {
             if (null == exceptions) { throw new ArgumentNullException( "exceptions", "NotFromTo requires exception states." ); }
             if (null == toState) { throw new ArgumentNullException( "toState", "NotFromTo requires a to state." ); }
 
@@ -151,7 +151,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state but the exception to the previous one.
         /// </summary>
-        public static StateTransition<T> FromAnyButToPrev(State<T> exception, Predicate<T> condition) {
+        public static StateTransition<T> FromAnyButToPrev(State<T> exception, Func<bool> condition) {
             if (null == exception) { throw new ArgumentNullException( "exception", "NotFromToPrev requires an exception state." ); }
 
             return new StateTransition<T>() {
@@ -165,7 +165,7 @@ namespace StateMachine {
         /// <summary>
         /// Create a transition from any state but the exceptions to the previous one.
         /// </summary>
-        public static StateTransition<T> FromAnyButToPrev(State<T>[] exceptions, Predicate<T> condition) {
+        public static StateTransition<T> FromAnyButToPrev(State<T>[] exceptions, Func<bool> condition) {
             if (null == exceptions) { throw new ArgumentNullException( "exceptions", "NotFromToPrev requires exception states." ); }
 
             return new StateTransition<T>() {
@@ -208,7 +208,7 @@ namespace StateMachine {
                 }
             }
 
-            return stateMatches && Condition( stateMachine.Owner );
+            return stateMatches && Condition();
         }
 
         public override int GetHashCode() {

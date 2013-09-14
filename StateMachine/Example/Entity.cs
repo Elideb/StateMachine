@@ -59,24 +59,24 @@ namespace StateMachine.Example {
 
         #region State condition methods
 
-        public static bool IsTargetOutOfRange(Entity entity) {
-            return entity.DistanceToTarget > 0.01f;
+        public bool IsTargetOutOfRange() {
+            return DistanceToTarget > 0.01f;
         }
 
-        public static bool IsTargetInRange(Entity entity) {
-            return !Entity.IsTargetOutOfRange( entity );
+        public bool IsTargetInRange() {
+            return !IsTargetOutOfRange();
         }
 
-        public static bool HasNoTarget(Entity entity) {
-            return entity.Target == null;
+        public bool HasNoTarget() {
+            return Target == null;
         }
 
-        public static bool HasTarget(Entity entity) {
-            return !Entity.HasNoTarget( entity );
+        public bool HasTarget() {
+            return !HasNoTarget();
         }
 
-        public static bool DoneTalking(Entity entity) {
-            return entity.PhrasesLeft == 0;
+        public bool DoneTalking() {
+            return PhrasesLeft == 0;
         }
 
         #endregion
