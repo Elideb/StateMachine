@@ -33,8 +33,12 @@ namespace StateMachine.Example {
         }
 
         public void Initialize() {
+            State<Entity>[] idleExceptions = new State<Entity>[] {
+                IdleState.Instance,
+                TalkState.Instance };
+
             stateMachine = new StateMachine<Entity>( this, IdleState.Instance )
-                .AddTransition( StateTransition<Entity>.NotFromTo( TalkState.Instance, HasNoTarget, IdleState.Instance ) )
+                .AddTransition( StateTransition<Entity>.NotFromTo( idleExceptions, HasNoTarget, IdleState.Instance ) )
                 .AddTransition( StateTransition<Entity>.FromTo( IdleState.Instance, HasTarget, WalkState.Instance ) )
                 .AddTransition( StateTransition<Entity>.FromTo( WalkState.Instance, IsTargetInRange, TalkState.Instance ) )
                 .AddTransition( StateTransition<Entity>.FromTo( TalkState.Instance, DoneTalking, IdleState.Instance ) );
