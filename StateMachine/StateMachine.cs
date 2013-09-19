@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace StateMachine {
 
@@ -94,15 +94,12 @@ namespace StateMachine {
         /// </summary>
         public void Update() {
             // Check if a new state should be executed
-            foreach (var transition in transitions) {
-                if (transition.Evaluate( State )) {
-                    if (transition.ToState == null) {
-                        State = PrevState;
-                    } else {
-                        State = transition.ToState;
-                    }
-                    break;
-                }
+            var toStates = from transition in transitions
+                           where transition.IsApplicable( State )
+                           select transition.ToState == null ? prevState : transition.ToState;
+
+            if (toStates.Any()) {
+                State = toStates.First();
             }
 
             if (null != State.OnUpdate) {
