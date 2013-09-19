@@ -95,7 +95,7 @@ namespace StateMachine {
         public void Update() {
             // Check if a new state should be executed
             var toStates = from transition in transitions
-                           where transition.Evaluate( State )
+                           where transition.IsApplicable( State )
                            select transition.ToState == null ? prevState : transition.ToState;
 
             if (toStates.Any()) {

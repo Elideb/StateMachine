@@ -63,7 +63,15 @@ namespace StateMachine {
 
         }
 
-        public bool Evaluate(State<T> currentState) {
+        /// <summary>
+        /// Evaluates if this transition is applicable given a state
+        /// and its own conditions.
+        /// </summary>
+        /// <param name="currentState">Current state machine's state.</param>
+        /// <returns>
+        /// <code>true</code> if the transition can be applied; <code>false</code> otherwise.
+        /// </returns>
+        public bool IsApplicable(State<T> currentState) {
             bool stateMatches = false;
 
             if (fromStates != null) {
