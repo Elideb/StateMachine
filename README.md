@@ -17,23 +17,19 @@ starting on IdleState:
 ```C#
 stateMachine = new StateMachine<Entity>( this, IdleState.Instance )
     .AddTransitions(
-        Transition<Entity>
-            .FromAny()
-            .Except( IdleState.Instance, TalkState.Instance )
-            .To( IdleState.Instance )
-            .When( HasNoTarget ),
-        Transition<Entity>
-            .From( IdleState.Instance )
-            .To( walkState )
-            .When( HasTarget ),
-        Transition<Entity>
-            .From( walkState )
-            .To( TalkState.Instance )
-            .When( IsTargetInRange ),
-        Transition<Entity>
-            .From( TalkState.Instance )
-            .To( IdleState.Instance )
-            .When( DoneTalking ) );
+        Transition.FromAny<Entity>()
+                  .Except( IdleState.Instance, TalkState.Instance )
+                  .To( IdleState.Instance )
+                  .When( HasNoTarget ),
+        Transition.From( IdleState.Instance )
+                  .To( walkState )
+                  .When( HasTarget ),
+        Transition.From( walkState )
+                  .To( TalkState.Instance )
+                  .When( IsTargetInRange ),
+        Transition.From( TalkState.Instance )
+                  .To( IdleState.Instance )
+                  .When( DoneTalking ) );
 ```
 
 

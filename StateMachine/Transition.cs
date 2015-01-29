@@ -3,6 +3,36 @@ using System.Collections.Generic;
 
 namespace StateMachine {
 
+    /// <summary>
+    /// Helper class to initiate transition configuration
+    /// without the need to specify the type.
+    /// </summary>
+    public static class Transition {
+
+        /// <summary>
+        /// Start configuring a transition which will start from any of the given states.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">If states is null.</exception>
+        /// <exception cref="ArgumentException">If states is empty.</exception>
+        /// <typeparam name="T">Implied type of the states' managed entities.</typeparam>
+        public static Transition<T>.ConfigFrom From<T>(params State<T>[] states) {
+            if (states == null || states.Length == 0)
+                throw new ArgumentNullException( "states", "At least an origin state must be defined" );
+
+            return new Transition<T>.ConfigFrom( states );
+        }
+
+        /// <summary>
+        /// Start configuring a transition which can trigger from any state.
+        /// Exceptions can be added in the resulting configuration.
+        /// </summary>
+        /// <typeparam name="T">Explicit type of the states' managed entities.</typeparam>
+        public static Transition<T>.ConfigFromAny FromAny<T>() {
+            return new Transition<T>.ConfigFromAny();
+        }
+
+    }
+
     public class Transition<T> {
 
         /// <summary>
@@ -37,27 +67,7 @@ namespace StateMachine {
         public State<T> ToState { get; private set; }
 
         /// <summary>
-        /// Start configuring a transition which will start from any of the given states.
-        /// </summary>
-        /// <exception cref="ArgumentNullException">If states is null.</exception>
-        /// <exception cref="ArgumentException">If states is empty.</exception>
-        public static ConfigFrom From(params State<T>[] states) {
-            if (states == null) { throw new ArgumentNullException( "states", "At least an origin state must be defined" ); }
-            if (states.Length == 0) { throw new ArgumentException( "states", "At least an origin state must be defined" ); }
-
-            return new ConfigFrom( states );
-        }
-
-        /// <summary>
-        /// Start configuring a transition which can trigger from any state.
-        /// Exceptions can be added in the resulting configuration.
-        /// </summary>
-        public static ConfigFromAny FromAny() {
-            return new ConfigFromAny();
-        }
-
-        /// <summary>
-        /// Cannot build a StateTransition, except from the static configurators.
+        /// Cannot build a StateTransition, except from the static configurators in <see cref="StateMachine.Transition"/>.
         /// </summary>
         private Transition() {
 

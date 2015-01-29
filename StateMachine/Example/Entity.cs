@@ -36,23 +36,19 @@ namespace StateMachine.Example {
 
             stateMachine = new StateMachine<Entity>( this, EntityStates.Idle )
                 .AddTransitions(
-                    Transition<Entity>
-                        .FromAny()
-                        .Except( EntityStates.Idle, EntityStates.Talk )
-                        .To( EntityStates.Idle )
-                        .When( HasNoTarget ),
-                    Transition<Entity>
-                        .From( EntityStates.Idle )
-                        .To( EntityStates.Walk )
-                        .When( HasTarget ),
-                    Transition<Entity>
-                        .From( EntityStates.Walk )
-                        .To( EntityStates.Talk )
-                        .When( IsTargetInRange ),
-                    Transition<Entity>
-                        .From( EntityStates.Talk )
-                        .To( EntityStates.Idle )
-                        .When( DoneTalking ) );
+                    Transition.FromAny<Entity>()
+                              .Except( EntityStates.Idle, EntityStates.Talk )
+                              .To( EntityStates.Idle )
+                              .When( HasNoTarget ),
+                    Transition.From( EntityStates.Idle )
+                              .To( EntityStates.Walk )
+                              .When( HasTarget ),
+                    Transition.From( EntityStates.Walk )
+                              .To( EntityStates.Talk )
+                              .When( IsTargetInRange ),
+                    Transition.From( EntityStates.Talk )
+                              .To( EntityStates.Idle )
+                              .When( DoneTalking ) );
 
         }
 
