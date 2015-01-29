@@ -16,8 +16,10 @@ namespace StateMachine {
         /// <exception cref="ArgumentException">If states is empty.</exception>
         /// <typeparam name="T">Implied type of the states' managed entities.</typeparam>
         public static Transition<T>.ConfigFrom From<T>(params State<T>[] states) {
-            if (states == null || states.Length == 0)
+            if (states == null)
                 throw new ArgumentNullException( "states", "At least an origin state must be defined" );
+            if(states.Length == 0)
+                throw new ArgumentException("states", "At least an origin state must be defined");
 
             return new Transition<T>.ConfigFrom( states );
         }
