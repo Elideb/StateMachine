@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace StateMachine.Example {
 
     static class EntityStates {
