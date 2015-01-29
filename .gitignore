@@ -1,3 +1,4 @@
 *.suo
+*.meta
 StateMachine/bin/
 StateMachine/obj/
