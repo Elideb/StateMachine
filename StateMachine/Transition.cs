@@ -295,6 +295,20 @@ namespace StateMachine {
                 };
             }
 
+            /// <summary>
+            /// Generate a transition which will trigger automatically.
+            /// Note that this means that the source state's OnUpdate will never execute.
+            /// </summary>
+            /// <returns>A properly configured transition, ready to be used.</returns>
+            public Transition<T> Always() {
+                return new Transition<T>() {
+                    fromStates = Origins,
+                    exceptionStates = Exceptions,
+                    ToState = Target,
+                    Condition = () => true
+                };
+            }
+
         }
     }
 
